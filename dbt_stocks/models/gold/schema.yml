@@ -1,0 +1,62 @@
+version: 2
+
+models:
+  - name: gold_last_quotes
+    description: "Latest stock quotes per symbol"
+    columns:
+      - name: symbol
+        tests:
+          - not_null
+      - name: current_price
+        tests:
+          - not_null
+          - positive_values
+      - name: change_percent
+        tests:
+          - not_null
+
+  - name: gold_avg_volatility_10min
+    description: "Average price and volatility over the last 10 minutes"
+    columns:
+      - name: symbol
+        tests:
+          - not_null
+      - name: avg_price_10min
+        tests:
+          - positive_values
+      - name: relative_volatility
+        tests:
+          - not_null
+
+  - name: gold_candlestick_10min
+    description: "Candlestick data (open, high, low, close) aggregated over 10-minute windows"
+    columns:
+      - name: symbol
+        tests:
+          - not_null
+      - name: candle_open
+        tests:
+          - not_null
+      - name: candle_close
+        tests:
+          - not_null
+
+  - name: gold_heatmap_change_10min
+    description: "Percentage change per stock over the last 10 minutes"
+    columns:
+      - name: symbol
+        tests:
+          - not_null
+      - name: change_percent_10min
+        tests:
+          - not_null
+
+  - name: gold_rsi_index
+    description: "RSI index computed based on price gains/losses for each symbol"
+    columns:
+      - name: symbol
+        tests:
+          - not_null
+      - name: rsi
+        tests:
+          - not_null

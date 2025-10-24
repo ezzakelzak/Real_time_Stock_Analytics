@@ -2,32 +2,32 @@ WITH source AS (
   SELECT
     symbol,
     TRY_CAST(current_price AS DOUBLE) AS current_price_dbl,
-    market_timestamp
+    TO_TIMESTAMP_LTZ(market_timestamp) AS ts
   FROM {{ ref('silver_clean_stock_quotes') }}
-  -- optionally filter invalid rows:
   WHERE TRY_CAST(current_price AS DOUBLE) IS NOT NULL
 ),
 
-latest_day AS (
-  -- if market_timestamp is epoch seconds (NUMBER/INT):
-  SELECT CAST(TO_TIMESTAMP_LTZ(MAX(market_timestamp)) AS DATE) AS max_day
+latest_window AS (
+  
+  SELECT
+    DATE_TRUNC('minute', MAX(ts)) AS max_time
   FROM source
 ),
 
 latest_prices AS (
   SELECT
     symbol,
-    AVG(current_price_dbl) AS avg_price
+    AVG(current_price_dbl) AS avg_price_10min
   FROM source
-  JOIN latest_day ld
-    ON CAST(TO_TIMESTAMP_LTZ(market_timestamp) AS DATE) = ld.max_day
+  JOIN latest_window lw
+    ON ts BETWEEN lw.max_time - INTERVAL '10 minutes' AND lw.max_time
   GROUP BY symbol
 ),
 
 all_time_volatility AS (
   SELECT
     symbol,
-    STDDEV_POP(current_price_dbl) AS volatility,             
+    STDDEV_POP(current_price_dbl) AS volatility,
     CASE
       WHEN AVG(current_price_dbl) = 0 THEN NULL
       ELSE STDDEV_POP(current_price_dbl) / NULLIF(AVG(current_price_dbl), 0)
@@ -38,7 +38,7 @@ all_time_volatility AS (
 
 SELECT
   lp.symbol,
-  lp.avg_price,
+  lp.avg_price_10min,
   v.volatility,
   v.relative_volatility
 FROM latest_prices lp

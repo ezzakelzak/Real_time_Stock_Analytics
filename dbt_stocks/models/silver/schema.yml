@@ -1,0 +1,51 @@
+version: 2
+
+models:
+  - name: silver_clean_stock_quotes
+    description: "Cleaned and validated stock quotes from the bronze layer. Ensures price consistency and valid data quality."
+    columns:
+      - name: symbol
+        description: "Stock symbol (e.g., AAPL, MSFT, TSLA)"
+        tests:
+          - not_null
+
+      - name: current_price
+        description: "Current price of the stock"
+        tests:
+          - not_null
+          - positive_values
+
+      - name: day_high
+        description: "Highest price of the day"
+        tests:
+          - not_null
+
+      - name: day_low
+        description: "Lowest price of the day"
+        tests:
+          - not_null
+
+      - name: day_open
+        description: "Opening price of the day"
+        tests:
+          - not_null
+
+      - name: prev_close
+        description: "Previous closing price"
+        tests:
+          - not_null
+
+      - name: market_timestamp
+        description: "Timestamp from the market API when data was recorded"
+        tests:
+          - not_null
+          - non_future_timestamps
+
+      - name: fetched_at
+        description: "Time when data was fetched by the system"
+        tests:
+          - not_null
+          - non_future_timestamps
+
+    tests:
+      - valid_price_order

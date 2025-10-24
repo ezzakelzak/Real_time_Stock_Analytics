@@ -44,26 +44,8 @@ Transformations gérées par DBT dans Snowflake
 
 Architecture scalable avec Snowflake
 
-Tableaux de bord Power BI prêts pour l’analyse
+Tableau de bord Power BI prêts pour l’analyse
 
-📂 Structure du dépôt
+<img src="images/dashboard.png" alt="Architecture" width="800"/>
 
-├── producer/                     # Producteur Kafka (API Finnhub)
-│   └── producer.py
-├── consumer/                     # Consommateur Kafka (vers MinIO)
-│   └── consumer.py
-├── dbt_stocks/models/
-│   ├── bronze
-│   │   ├── bronze_stg_stock_quotes.sql
-│   │   └── sources.yml
-│   ├── silver
-│   │   └── silver_clean_stock_quotes.sql
-│   └── gold
-│       ├── gold_candlestick.sql
-│       ├── gold_kpi.sql
-│       └── gold_treechart.sql
-├── dag/
-│   └── minio_to_snowflake.py
-├── docker-compose.yml            
-├── requirements.txt
-└── README.md                     # Documentation
+
